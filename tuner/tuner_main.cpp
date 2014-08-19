@@ -11,37 +11,25 @@
 /*Functions*/
 void setup_adc();
 void setup_tmr();
-void setup_pwm();
 
 /*Global variables*/
 volatile uint8_t adc_value;
 volatile bool newValue = true;
 
 int main(void){
-    /*Setup LCD*/
 	//RS, RW (255 for disabled), E, 4 bit Y/N
     LiquidCrystal lcd = LiquidCrystal(PD7,255,PD5,1); 
 	
-	/*Setup timer1 and ADC*/
 	setup_tmr();	
 	setup_adc();
-	setup_pwm();
 
 	sei(); //Enable interrupts
 
-	char adc_str[6]; //Holds printed string
 	
-
 	while(1){
-		if (newValue){
-		sprintf(adc_str, "%d", adc_value);
-		lcd.clear();
-		lcd.writeString("VAL :");
-		lcd.setCursor(0,6);
-		lcd.writeString(adc_str);
-		newValue = false;
-		}
-    }
+    	//If buffer is full, do pitch calculation and compare	
+
+	}
 
 	return 0; 
 }
@@ -50,15 +38,14 @@ int main(void){
 ISR(ADC_vect){
 	newValue = true; //There is a new reading
 	adc_value = ADCH; //Read ADC value
-	OCR0A = adc_value; //Change brightness
-	TIFR1 |= (1 <<OCF1B); //Clear interrupt flag manually
+	TIFR1 |= (1 << OCF1B); //Clear interrupt flag manually
 }
 
 void setup_tmr(){
-	/*Set timer1 */
-	OCR1A = 0x10D3; // TOP for CTC mode
+	/*Set timer1 to 2000Hz*/
+	OCR1A = 0x03E8;   
 	TCCR1B |=  (1 << WGM12); //Mode 4: CTC on OCR1A
-	TCCR1B |=  (1 << CS12) ; //Prescaler 1024 and start
+	TCCR1B |=  (1 << CS11) ; //Prescaler 8 and start
 }
 
 void setup_adc(){
@@ -73,12 +60,3 @@ void setup_adc(){
 	ADCSRA |= (1 << ADIE); //Enable interrupt vector 
 	ADCSRA |= (1 << ADEN); //Enable the ADC!
 }
-
-void setup_pwm(){
-	DDRD |= (1 << PD6); //PD6 = OC0A
-	OCR0A = 0;
-	TCCR0A |= (1 << COM0A1); //Non-inverting mode
-	TCCR0A |= (1 << WGM01) | (1 << WGM00); //Fast PWM
-	TCCR0B |= (1 << CS01); //Prescaler = 8
-}
-

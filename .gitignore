@@ -1,4 +1,5 @@
 *.hex
+*.o
 *.bin
 *.elf
 *.eps
@@ -6,6 +7,9 @@
 *.pdf
 *.bak
 *.lst
+*.srec
+*.map
+*.zip
 datasheets/*
 
 
