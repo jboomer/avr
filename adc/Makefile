@@ -1,4 +1,4 @@
-PRG            = test_adc
+PRG            = adc_test
 OBJ            = adc_main.o lcd_lib.o
 MCU_TARGET     = atmega328p
 OPTIMIZE       = -O2
@@ -7,10 +7,7 @@ USB            = /dev/ttyACM0
 PRGMR          = arduino
 DEFS           =
 LIBS           =
-
-# You should not have to change anything below here.
-
-CXX             = avr-g++
+CC             = avr-gcc
 
 # Override is only needed by avr-lib build system.
 
@@ -23,11 +20,11 @@ OBJDUMP        = avr-objdump
 all: $(PRG).elf lst text eeprom
 
 $(PRG).elf: $(OBJ)
-	$(CXX) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 # dependency:
-%.o: %.cpp
-	$(CXX) $(CFLAGS) -c -o $@ $^
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $^
 
 clean:
 	rm -rf *.o $(PRG).elf *.eps *.png *.pdf *.bak 

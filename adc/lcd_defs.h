@@ -48,55 +48,53 @@
 #define DIRDATA DDRC
 #define DIRINSTR DDRD
 
-class LiquidCrystal{
-public:
-  LiquidCrystal(uint8_t rs, uint8_t rw, uint8_t enable,
+int lcd_init(uint8_t rs, uint8_t rw, uint8_t enable,
 		uint8_t fourbitmode);
    
-  void begin(uint8_t cols, uint8_t rows, uint8_t charsize = LCD_5x8DOTS);
+void lcd_begin(uint8_t cols, uint8_t rows, uint8_t dotsize);
 
-  void clear();
-  void home();
-  
-  void noDisplay();
-  void display();
-  void noBlink();
-  void blink();
-  void noCursor();
-  void cursor();
-  void scrollDisplayLeft();
-  void scrollDisplayRight();
-  void leftToRight();
-  void rightToLeft();
-  void autoscroll();
-  void noAutoscroll();
+void lcd_clear();
+void lcd_home();
 
-  //void createChar(uint8_t, uint8_t[]);
-  
-  void writeString(char*);
-  void setCursor(uint8_t, uint8_t); 
-  virtual size_t write(uint8_t);
-  void command(uint8_t);
-  
-  
-  //using Print::write;
-private:
-  void send(uint8_t, uint8_t);
-  void write4bits(uint8_t);
-  void write8bits(uint8_t);
-  void pulseEnable();
+void lcd_noDisplay();
+void lcd_display();
+void lcd_noBlink();
+void lcd_blink();
+void lcd_noCursor();
+void lcd_cursor();
+void lcd_scrollDisplayLeft();
+void lcd_scrollDisplayRight();
+void lcd_leftToRight();
+void lcd_rightToLeft();
+void lcd_autoscroll();
+void lcd_noAutoscroll();
 
-  uint8_t _rs_pin; // LOW: command.  HIGH: character.
-  uint8_t _rw_pin; // LOW: write to LCD.  HIGH: read from LCD.
-  uint8_t _enable_pin; // activated by a HIGH pulse.
-  
-  uint8_t _displayfunction;
-  uint8_t _displaycontrol;
-  uint8_t _displaymode;
+//void createChar(uint8_t, uint8_t[]);
 
-  uint8_t _initialized;
+void lcd_writeString(char*);
+void lcd_setCursor(uint8_t, uint8_t); 
+size_t lcd_write(uint8_t);
+void lcd_command(uint8_t);
 
-  uint8_t _numlines,_currline;
-};
+
+//using Print::write;
+void lcd_send(uint8_t, uint8_t);
+void lcd_write4bits(uint8_t);
+void lcd_write8bits(uint8_t);
+void lcd_pulseEnable();
+
+uint8_t lcd_rs_pin; // LOW: command.  HIGH: character.
+uint8_t lcd_rw_pin; // LOW: write to LCD.  HIGH: read from LCD.
+uint8_t lcd_enable_pin; // activated by a HIGH pulse.
+
+uint8_t lcd_displayfunction;
+uint8_t lcd_displaycontrol;
+uint8_t lcd_displaymode;
+
+uint8_t lcd_initialized;
+
+uint8_t lcd_numlines; 
+uint8_t lcd_currline;
+
 
 #endif

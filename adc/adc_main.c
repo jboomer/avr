@@ -1,4 +1,8 @@
-/*adc_main.cpp*/
+/*adc_main.cpp
+
+Reads analog input and prints it on the lcd screen
+*/
+
 
 #define F_CPU 16000000UL
 #include <avr/io.h>
@@ -15,54 +19,49 @@ void setup_pwm();
 
 /*Global variables*/
 volatile uint8_t adc_value;
-volatile bool newValue = true;
+volatile int newValue = 1;
 
 int main(void){
-    /*Setup LCD*/
 	//RS, RW (255 for disabled), E, 4 bit Y/N
-    LiquidCrystal lcd = LiquidCrystal(PD7,255,PD5,1); 
+    	lcd_init(PD7,255,PD5,1); 
 	
-	/*Setup timer1 and ADC*/
 	setup_tmr();	
 	setup_adc();
 	setup_pwm();
 
 	sei(); //Enable interrupts
 
-	char adc_str[6]; //Holds printed string
+	char adc_str[6];
 	
 
 	while(1){
 		if (newValue){
 		sprintf(adc_str, "%d", adc_value);
-		lcd.clear();
-		lcd.writeString("VAL :");
-		lcd.setCursor(0,6);
-		lcd.writeString(adc_str);
-		newValue = false;
+		lcd_clear();
+		lcd_writeString("VAL :");
+		lcd_setCursor(0,6);
+		lcd_writeString(adc_str);
+		newValue = 0;
 		}
     }
-
 	return 0; 
 }
 
 
 ISR(ADC_vect){
-	newValue = true; //There is a new reading
+	newValue = 1; //There is a new reading
 	adc_value = ADCH; //Read ADC value
-	OCR0A = adc_value; //Change brightness
-	TIFR1 |= (1 <<OCF1B); //Clear interrupt flag manually
+	OCR0A = adc_value; //Change duty cycle
+	TIFR1 |= (1 <<OCF1B); //Clear interrupt flag manually (Waarom?)
 }
 
 void setup_tmr(){
-	/*Set timer1 */
 	OCR1A = 0x10D3; // TOP for CTC mode
 	TCCR1B |=  (1 << WGM12); //Mode 4: CTC on OCR1A
 	TCCR1B |=  (1 << CS12) ; //Prescaler 1024 and start
 }
 
 void setup_adc(){
-    /*Set up ADC on ADC5*/
 	ADMUX |= (1 << REFS0); //Use AVcc as reference voltage
 	ADMUX |= (1 << ADLAR); //Use only 8bit resolution
 	ADMUX |= (1 << MUX0) | (1 << MUX2); //Select ADC5
